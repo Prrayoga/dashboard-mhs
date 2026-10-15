@@ -1,0 +1,263 @@
+/* ===== 1. VARIABEL ===== */
+/* Nilai yang dipakai berulang disimpan sebagai variabel,
+ jadi mengubah lebar sidebar atau warna cukup di satu tempat. */
+:root {
+  --sidebar-w: 250px;
+  --navbar-h: 60px;
+  --warna-sidebar: #1f2d3d;
+  --warna-sidebar-hover: #2c3e50;
+  --warna-aksen: #2980b9;
+}
+/* ===== 2. STRUKTUR UTAMA ===== */
+/* .main berisi navbar + konten + footer. margin-left sebesar
+ lebar sidebar supaya isinya tidak tertutup sidebar yang
+ posisinya fixed (melayang di sisi kiri layar). */
+.main {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.25s ease;
+}
+.content {
+  flex: 1;
+  padding: 24px;
+}
+.footer {
+  padding: 14px 24px;
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  background: #fff;
+  border-top: 1px solid #e5e5e5;
+}
+
+/* ===== 3. SIDEBAR ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--warna-sidebar);
+  color: #cfd8e3;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: transform 0.25s ease;
+}
+.sidebar-brand {
+  height: var(--navbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.sidebar-menu {
+  list-style: none;
+  margin: 0;
+  padding: 12px 0;
+}
+.sidebar-title {
+  padding: 14px 20px 6px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #7f8fa4;
+}
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: #cfd8e3;
+  text-decoration: none;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+}
+.sidebar-menu a:hover {
+  background: var(--warna-sidebar-hover);
+  color: #fff;
+}
+.sidebar-menu a.aktif {
+  background: var(--warna-sidebar-hover);
+  color: #fff;
+  border-left-color: var(--warna-aksen);
+}
+.menu-ikon {
+  width: 20px;
+  text-align: center;
+}
+
+/* ===== 4. NAVBAR & HAMBURGER ===== */
+/* position: sticky membuat navbar menempel di atas saat halaman di-scroll */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  height: var(--navbar-h);
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+.navbar-kiri {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.navbar-judul {
+  font-weight: bold;
+  color: #2c3e50;
+}
+.hamburger {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+.hamburger:hover {
+  background: #f0f2f5;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #2c3e50;
+  border-radius: 2px;
+}
+/* ===== 5. DROPDOWN USER ===== */
+.dropdown {
+  position: relative;
+}
+.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: #2c3e50;
+}
+.dropdown-toggle:hover {
+  background: #f0f2f5;
+}
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--warna-aksen);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+/* Menu dropdown disembunyikan (display: none), baru muncul
+ ketika JavaScript menambahkan class "tampil". */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 190px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+.dropdown-menu.tampil {
+  display: block;
+}
+.dropdown-menu a {
+  display: block;
+  padding: 10px 16px;
+  color: #333;
+  text-decoration: none;
+  fontsize: 14px;
+}
+.dropdown-menu a:hover {
+  background: #f4f6f9;
+}
+.dropdown-info {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: #888;
+  border-bottom: 1px solid #eee;
+}
+/* ===== 6. HEADER HALAMAN & BREADCRUMB ===== */
+.page-header {
+  margin-bottom: 20px;
+}
+.page-header h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: #2c3e50;
+}
+.breadcrumb {
+  font-size: 13px;
+  color: #888;
+}
+.breadcrumb a {
+  color: var(--warna-aksen);
+  text-decoration: none;
+}
+
+/* ===== 8. SIDEBAR TERTUTUP (DESKTOP) ===== */
+/* Class "sidebar-collapsed" ditambahkan ke <body> oleh JavaScript
+ saat hamburger diklik di layar lebar. */
+body.sidebar-collapsed .sidebar {
+  transform: translateX(-100%);
+}
+body.sidebar-collapsed .main {
+  margin-left: 0;
+}
+/* ===== 9. OVERLAY ===== */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 999;
+}
+/* ===== 10. RESPONSIF (LAYAR HP / TABLET KECIL) ===== */
+/* Aturan di dalam @media hanya berlaku jika lebar layar <= 768px.
+ Di layar kecil, sidebar tersembunyi secara default dan baru
+ muncul (menimpa konten) saat hamburger diklik. */
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+  }
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  body.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+  body.sidebar-open .overlay {
+    display: block;
+  }
+  .content {
+    padding: 16px;
+  }
+  .navbar-judul {
+    display: none;
+  }
+  .nama-user {
+    display: none;
+  }
+}
