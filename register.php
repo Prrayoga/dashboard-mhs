@@ -3,14 +3,13 @@ require 'config/koneksi.php';
 require 'config/auth.php';
 
 if (sudah_login()) {
-    header("Location: index.php");
+    header("Location: dashboard.php");
     exit;
 }
 
 $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     $username = trim($_POST['username']);
     $nama = trim($_POST['nama_lengkap']);
     $password = trim($_POST['password']);
@@ -51,19 +50,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi Akun - SIMAHASISWA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
 
-<form action="register.php" method="POST">
-    <label for="nama_lengkap">Nama Lengkap</label>
-    <input type="text" id="nama_lengkap" name="nama_lengkap" required
-        value="<?= isset($nama) ? htmlspecialchars($nama) : '' ?>">
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" required
-        value="<?= isset($username) ? htmlspecialchars($username) : '' ?>">
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required>
-    <label for="konfirmasi">Konfirmasi Password</label>
-    <input type="password" id="konfirmasi" name="konfirmasi" required>
-    <div style="margin-top:20px;">
-        <button type="submit" class="btn btn-simpan" style="width:100%;">Daftar</button>
+<div class="auth-card">
+    <div class="auth-header">
+        <div class="logo">🎓</div>
+        <h1>SIMAHASISWA</h1>
+        <p>Pendaftaran Akun Baru</p>
     </div>
-</form>
+
+    <!-- Alert Notifikasi Error -->
+    <?php if (!empty($error)) : ?>
+        <div class="alert alert-danger">
+            <span>⚠️</span> <?= htmlspecialchars($error) ?>
+        </div>
+    <?php endif; ?>
+
+    <form action="register.php" method="POST">
+        <div class="form-group">
+            <label for="nama_lengkap">Nama Lengkap</label>
+            <input type="text" id="nama_lengkap" name="nama_lengkap" placeholder="Masukkan nama lengkap" required
+                value="<?= isset($nama) ? htmlspecialchars($nama) : '' ?>">
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="4-20 karakter huruf/angka" required
+                value="<?= isset($username) ? htmlspecialchars($username) : '' ?>">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Minimal 6 karakter" required>
+        </div>
+
+        <div class="form-group">
+            <label for="konfirmasi">Konfirmasi Password</label>
+            <input type="password" id="konfirmasi" name="konfirmasi" placeholder="Ulangi password" required>
+        </div>
+
+        <div style="margin-top: 24px;">
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px;">Daftar Akun</button>
+        </div>
+    </form>
+
+    <div class="auth-footer">
+        Sudah memiliki akun? <a href="login.php">Masuk Disini</a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -188,7 +188,7 @@
   padding: 10px 16px;
   color: #333;
   text-decoration: none;
-  fontsize: 14px;
+  font-size: 14px;
 }
 .dropdown-menu a:hover {
   background: #f4f6f9;
