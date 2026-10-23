@@ -14,9 +14,3 @@ if (!$koneksi) {
 }
 // (Opsional) set karakter set agar tidak masalah dengan simbol/emoji
 mysqli_set_charset($koneksi, "utf8mb4");
-
-// Pastikan kolom foto tersedia pada tabel mahasiswa jika belum ada
-$cek_kolom = mysqli_query($koneksi, "SHOW COLUMNS FROM mahasiswa LIKE 'foto'");
-if ($cek_kolom && mysqli_num_rows($cek_kolom) == 0) {
-    mysqli_query($koneksi, "ALTER TABLE mahasiswa ADD COLUMN foto VARCHAR(255) NULL AFTER email");
-}

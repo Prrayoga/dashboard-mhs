@@ -11,39 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $jurusan = mysqli_real_escape_string($koneksi, $_POST['jurusan']);
     $email = mysqli_real_escape_string($koneksi, $_POST['email']);
 
-    // Upload Foto (Opsional)
-    $foto = null;
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $nama_file = $_FILES['foto']['name'];
-        $tmp_file  = $_FILES['foto']['tmp_name'];
-        $ekstensi  = strtolower(pathinfo($nama_file, PATHINFO_EXTENSION));
-        $ekstensi_boleh = ['jpg', 'jpeg', 'png', 'webp'];
-
-        if (in_array($ekstensi, $ekstensi_boleh)) {
-            $nama_foto_baru = time() . '_' . uniqid() . '.' . $ekstensi;
-            $tujuan = 'uploads/' . $nama_foto_baru;
-            if (!is_dir('uploads')) {
-                mkdir('uploads', 0777, true);
-            }
-            if (move_uploaded_file($tmp_file, $tujuan)) {
-                $foto = $nama_foto_baru;
-            } else {
-                $error = "Gagal mengunggah foto.";
-            }
-        } else {
-            $error = "Format foto tidak valid. Gunakan format JPG, JPEG, PNG, atau WEBP.";
-        }
-    }
-
-    if (empty($error)) {
-        $foto_sql = $foto ? "'$foto'" : "NULL";
-        $query = "INSERT INTO mahasiswa (nim, nama, jurusan, email, foto) VALUES ('$nim', '$nama', '$jurusan', '$email', $foto_sql)";
-        if (mysqli_query($koneksi, $query)) {
-            header("Location: index.php?pesan=tambah");
-            exit;
-        } else {
-            $error = "Gagal menyimpan data: " . mysqli_error($koneksi);
-        }
+    $query = "INSERT INTO mahasiswa (nim, nama, jurusan, email) VALUES ('$nim', '$nama', '$jurusan', '$email')";
+    if (mysqli_query($koneksi, $query)) {
+        header("Location: index.php?pesan=tambah");
+        exit;
+    } else {
+        $error = "Gagal menyimpan data: " . mysqli_error($koneksi);
     }
 }
 
@@ -66,7 +39,7 @@ require 'layout/header.php';
         </h3>
     </div>
     <div class="card-body">
-        <form action="create.php" method="POST" enctype="multipart/form-data">
+        <form action="create.php" method="POST">
             <div class="form-grid">
                 <div class="form-group">
                     <label for="nim">NIM</label>
@@ -83,10 +56,6 @@ require 'layout/header.php';
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="Contoh: nama@example.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="foto">Foto Profil (Opsional)</label>
-                    <input type="file" id="foto" name="foto" accept="image/*">
                 </div>
             </div>
             <div class="form-footer">
