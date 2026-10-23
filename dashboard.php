@@ -81,6 +81,7 @@ require 'layout/header.php';
                 <thead>
                     <tr>
                         <th style="width: 50px;">No</th>
+                        <th style="width: 60px; text-align: center;">Foto</th>
                         <th>NIM</th>
                         <th>Nama</th>
                         <th>Jurusan</th>
@@ -93,6 +94,13 @@ require 'layout/header.php';
                         <?php $no = 1; while ($row = mysqli_fetch_assoc($query_terbaru)) : ?>
                             <tr>
                                 <td><?= $no++ ?></td>
+                                <td style="text-align: center;">
+                                    <?php if (!empty($row['foto']) && file_exists('uploads/' . $row['foto'])) : ?>
+                                        <img src="uploads/<?= htmlspecialchars($row['foto']) ?>" alt="Foto" class="img-avatar">
+                                    <?php else : ?>
+                                        <div class="avatar-placeholder"><?= strtoupper(mb_substr($row['nama'], 0, 1)) ?></div>
+                                    <?php endif; ?>
+                                </td>
                                 <td><strong><?= htmlspecialchars($row['nim']) ?></strong></td>
                                 <td><?= htmlspecialchars($row['nama']) ?></td>
                                 <td><span class="badge badge-jurusan"><?= htmlspecialchars($row['jurusan']) ?></span></td>
@@ -106,7 +114,7 @@ require 'layout/header.php';
                         <?php endwhile; ?>
                     <?php else : ?>
                         <tr>
-                            <td colspan="6">
+                            <td colspan="7">
                                 <div class="empty-state">
                                     <div class="empty-state-icon">📂</div>
                                     <div class="empty-state-text">Belum ada data mahasiswa yang terdaftar.</div>
