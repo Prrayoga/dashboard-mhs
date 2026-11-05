@@ -1,51 +1,44 @@
 <?php
 require 'config/koneksi.php';
 require 'config/auth.php';
+require_once 'config/upload.php';
 wajib_login(); // halaman ini hanya boleh diakses setelah login
 
 $error = "";
-
+$nim = $nama = $jurusan = $email = ""; // nilai awal form (kosong)
+// Proses simpan dijalankan SEBELUM layout dipasang, karena
+// header("Location: ...") tidak boleh dipanggil setelah ada output HTML.
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nim = mysqli_real_escape_string($koneksi, $_POST['nim']);
-    $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-    $jurusan = mysqli_real_escape_string($koneksi, $_POST['jurusan']);
-    $email = mysqli_real_escape_string($koneksi, $_POST['email']);
-
-    // Upload Foto (Opsional)
-    $foto = null;
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        $nama_file = $_FILES['foto']['name'];
-        $tmp_file  = $_FILES['foto']['tmp_name'];
-        $ekstensi  = strtolower(pathinfo($nama_file, PATHINFO_EXTENSION));
-        $ekstensi_boleh = ['jpg', 'jpeg', 'png', 'webp'];
-
-        if (in_array($ekstensi, $ekstensi_boleh)) {
-            $nama_foto_baru = time() . '_' . uniqid() . '.' . $ekstensi;
-            $tujuan = 'uploads/' . $nama_foto_baru;
-            if (!is_dir('uploads')) {
-                mkdir('uploads', 0777, true);
-            }
-            if (move_uploaded_file($tmp_file, $tujuan)) {
-                $foto = $nama_foto_baru;
-            } else {
-                $error = "Gagal mengunggah foto.";
-            }
-        } else {
-            $error = "Format foto tidak valid. Gunakan format JPG, JPEG, PNG, atau WEBP.";
-        }
+    $nim = trim($_POST['nim'] ?? '');
+    $nama = trim($_POST['nama'] ?? '');
+    $jurusan = trim($_POST['jurusan'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    // Validasi field teks
+    if ($nim === "" || $nama === "" || $jurusan === "" || $email === "") {
+        $error = "NIM, nama, jurusan, dan email wajib diisi.";
     }
-
-    if (empty($error)) {
-        $foto_sql = $foto ? "'$foto'" : "NULL";
-        $query = "INSERT INTO mahasiswa (nim, nama, jurusan, email, foto) VALUES ('$nim', '$nama', '$jurusan', '$email', $foto_sql)";
-        if (mysqli_query($koneksi, $query)) {
+    // Proses upload foto (opsional). Jika ada masalah, $error terisi.
+    $foto_nama = null;
+    if ($error === "") {
+        $foto_nama = upload_foto($_FILES['foto'] ?? ['error' => UPLOAD_ERR_NO_FILE], $error);
+    }
+    // Simpan ke database hanya jika semua langkah di atas lolos
+    if ($error === "") {
+        $stmt = mysqli_prepare(
+            $koneksi,
+            "INSERT INTO mahasiswa (nim, nama, jurusan, email, foto) VALUES (?, ?, ?, ?, ?)"
+        );
+        mysqli_stmt_bind_param($stmt, "sssss", $nim, $nama, $jurusan, $email, $foto_nama);
+        if (mysqli_stmt_execute($stmt)) {
             header("Location: index.php?pesan=tambah");
             exit;
         } else {
+            hapus_foto($foto_nama); // data gagal tersimpan -> jangan sisakan file yatim
             $error = "Gagal menyimpan data: " . mysqli_error($koneksi);
         }
     }
 }
+
 
 $judul_halaman = 'Tambah Mahasiswa';
 $menu_aktif = 'tambah';
@@ -86,7 +79,7 @@ require 'layout/header.php';
                 </div>
                 <div class="form-group">
                     <label for="foto">Foto Profil (Opsional)</label>
-                    <input type="file" id="foto" name="foto" accept="image/*">
+                    <input type="file" id="foto" name="foto" accept=".jpg,.jpeg,.png">
                 </div>
             </div>
             <div class="form-footer">

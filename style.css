@@ -1,40 +1,39 @@
-/* ==========================================================================
-   STYLE.CSS - GLOBAL UI & DASHBOARD STYLES
-   SIMAHASISWA CRUD System
-   ========================================================================== */
-
-/* ===== 1. RESET & DASAR ===== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
   font-size: 14px;
   line-height: 1.5;
-  color: #334155;
-  background-color: #f1f5f9;
+  color: #34443c;
+  background-color: #f3f5f2;
   -webkit-font-smoothing: antialiased;
 }
 
 a {
-  color: #2980b9;
+  color: #1f5a43;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 a:hover {
-  color: #1c5982;
+  color: #174531;
 }
 
-/* ===== 2. KARTU & CONTAINER KONTEN ===== */
 .card {
   background: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.03);
+  border: 1px solid #dce5dd;
   margin-bottom: 24px;
   overflow: hidden;
 }
@@ -42,7 +41,7 @@ a:hover {
 .card-header {
   padding: 16px 20px;
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #dce5dd;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,7 +53,7 @@ a:hover {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #1e293b;
+  color: #24372d;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -66,13 +65,12 @@ a:hover {
 
 .card-footer {
   padding: 14px 20px;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  background: #f5f7f4;
+  border-top: 1px solid #dce5dd;
 }
 
-/* ===== 3. DASHBOARD WIDGETS & STATISTIK ===== */
 .welcome-banner {
-  background: linear-gradient(135deg, #1f2d3d 0%, #2c3e50 50%, #2980b9 100%);
+  background: #17392d;
   color: #ffffff;
   border-radius: 12px;
   padding: 24px 28px;
@@ -95,7 +93,7 @@ a:hover {
 .welcome-text p {
   margin: 0;
   font-size: 14px;
-  color: #e2e8f0;
+  color: #dce8df;
   max-width: 550px;
 }
 
@@ -109,13 +107,15 @@ a:hover {
 .stat-card {
   background: #ffffff;
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #dce5dd;
   padding: 20px;
   display: flex;
   align-items: center;
   gap: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
@@ -135,13 +135,13 @@ a:hover {
 }
 
 .stat-icon.primary {
-  background: #e0f2fe;
-  color: #0284c7;
+  background: #e6f0e8;
+  color: #265c40;
 }
 
 .stat-icon.success {
-  background: #dcfce7;
-  color: #16a34a;
+  background: #e5f1e7;
+  color: #356f48;
 }
 
 .stat-icon.warning {
@@ -150,8 +150,8 @@ a:hover {
 }
 
 .stat-icon.purple {
-  background: #f3e8ff;
-  color: #9333ea;
+  background: #e6f0e8;
+  color: #265c40;
 }
 
 .stat-info {
@@ -161,55 +161,59 @@ a:hover {
 .stat-value {
   font-size: 24px;
   font-weight: 700;
-  color: #0f172a;
+  color: #203329;
   line-height: 1.2;
 }
 
 .stat-label {
   font-size: 13px;
-  color: #64748b;
+  color: #67756c;
   margin-top: 2px;
 }
 
-/* ===== 4. TABEL DATA ===== */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-table, .table {
+table,
+.table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
   font-size: 13.5px;
 }
 
-table th, .table th {
-  background: #f8fafc;
-  color: #475569;
+table th,
+.table th {
+  background: #f5f7f4;
+  color: #4a5b50;
   font-weight: 600;
   text-transform: uppercase;
   font-size: 12px;
   letter-spacing: 0.5px;
   padding: 12px 16px;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid #dce5dd;
   white-space: nowrap;
 }
 
-table td, .table td {
+table td,
+.table td {
   padding: 13px 16px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #e8eee8;
   vertical-align: middle;
-  color: #334155;
+  color: #34443c;
 }
 
-table tr:last-child td, .table tr:last-child td {
+table tr:last-child td,
+.table tr:last-child td {
   border-bottom: none;
 }
 
-table tbody tr:hover, .table tbody tr:hover {
-  background-color: #f8fafc;
+table tbody tr:hover,
+.table tbody tr:hover {
+  background-color: #f5f7f4;
 }
 
 .badge {
@@ -221,19 +225,18 @@ table tbody tr:hover, .table tbody tr:hover {
 }
 
 .badge-jurusan {
-  background: #e0f2fe;
-  color: #0369a1;
+  background: #e6f0e8;
+  color: #285e43;
 }
 
 .badge-count {
-  background: #f1f5f9;
-  color: #475569;
+  background: #f0f3ef;
+  color: #4a5b50;
   font-size: 11px;
   padding: 2px 8px;
   border-radius: 12px;
 }
 
-/* ===== 5. TOMBOL (BUTTONS) ===== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -246,54 +249,65 @@ table tbody tr:hover, .table tbody tr:hover {
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
   line-height: 1.4;
 }
 
-.btn-primary, .btn-simpan {
-  background-color: #2980b9;
+.btn-primary,
+.btn-simpan {
+  background-color: #1f5a43;
   color: #ffffff;
 }
-.btn-primary:hover, .btn-simpan:hover {
-  background-color: #2471a3;
+.btn-primary:hover,
+.btn-simpan:hover {
+  background-color: #174531;
   color: #ffffff;
 }
 
 .btn-success {
-  background-color: #10b981;
+  background-color: #286747;
   color: #ffffff;
 }
 .btn-success:hover {
-  background-color: #059669;
+  background-color: #20583b;
   color: #ffffff;
 }
 
-.btn-edit, .btn-warning {
+.btn-edit,
+.btn-warning {
   background-color: #f59e0b;
   color: #ffffff;
 }
-.btn-edit:hover, .btn-warning:hover {
+.btn-edit:hover,
+.btn-warning:hover {
   background-color: #d97706;
   color: #ffffff;
 }
 
-.btn-hapus, .btn-danger {
+.btn-hapus,
+.btn-danger {
   background-color: #ef4444;
   color: #ffffff;
 }
-.btn-hapus:hover, .btn-danger:hover {
+.btn-hapus:hover,
+.btn-danger:hover {
   background-color: #dc2626;
   color: #ffffff;
 }
 
-.btn-secondary, .btn-batal {
-  background-color: #f1f5f9;
-  color: #475569;
-  border-color: #cbd5e1;
+.btn-secondary,
+.btn-batal {
+  background-color: #f0f3ef;
+  color: #4a5b50;
+  border-color: #cbd8ce;
 }
-.btn-secondary:hover, .btn-batal:hover {
-  background-color: #e2e8f0;
-  color: #1e293b;
+.btn-secondary:hover,
+.btn-batal:hover {
+  background-color: #e4ebe4;
+  color: #24372d;
 }
 
 .btn-sm {
@@ -308,7 +322,6 @@ table tbody tr:hover, .table tbody tr:hover {
   align-items: center;
 }
 
-/* ===== 6. FORMULIR ===== */
 .form-group {
   margin-bottom: 18px;
 }
@@ -318,7 +331,7 @@ label {
   margin-bottom: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: #334155;
+  color: #34443c;
 }
 
 input[type="text"],
@@ -329,11 +342,13 @@ textarea {
   width: 100%;
   padding: 9px 13px;
   font-size: 13.5px;
-  color: #1e293b;
+  color: #24372d;
   background-color: #ffffff;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #cbd8ce;
   border-radius: 6px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
   outline: none;
 }
 
@@ -342,8 +357,8 @@ input[type="email"]:focus,
 input[type="password"]:focus,
 select:focus,
 textarea:focus {
-  border-color: #2980b9;
-  box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.15);
+  border-color: #1f5a43;
+  box-shadow: 0 0 0 3px rgba(31, 90, 67, 0.15);
 }
 
 .form-grid {
@@ -359,7 +374,6 @@ textarea:focus {
   align-items: center;
 }
 
-/* ===== 7. ALERT / NOTIFIKASI ===== */
 .alert {
   padding: 12px 16px;
   border-radius: 8px;
@@ -384,9 +398,9 @@ textarea:focus {
 }
 
 .alert-info {
-  background-color: #f0f9ff;
-  color: #075985;
-  border-color: #bae6fd;
+  background-color: #eef4ef;
+  color: #395a46;
+  border-color: #cbdacd;
 }
 
 .alert-warning {
@@ -395,14 +409,13 @@ textarea:focus {
   border-color: #fde68a;
 }
 
-/* ===== 8. HALAMAN AUTH (LOGIN & REGISTER) ===== */
 .auth-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: linear-gradient(135deg, #1f2d3d 0%, #2c3e50 60%, #2980b9 100%);
+  background: #17392d;
 }
 
 .auth-card {
@@ -427,13 +440,13 @@ textarea:focus {
 .auth-header h1 {
   font-size: 22px;
   font-weight: 700;
-  color: #1e293b;
+  color: #24372d;
   margin: 0 0 4px;
 }
 
 .auth-header p {
   font-size: 13px;
-  color: #64748b;
+  color: #67756c;
   margin: 0;
 }
 
@@ -441,16 +454,15 @@ textarea:focus {
   text-align: center;
   margin-top: 24px;
   padding-top: 18px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #e8eee8;
   font-size: 13px;
-  color: #64748b;
+  color: #67756c;
 }
 
-/* ===== 9. EMPTY STATE ===== */
 .empty-state {
   text-align: center;
   padding: 40px 20px;
-  color: #94a3b8;
+  color: #87968a;
 }
 
 .empty-state-icon {
@@ -463,24 +475,40 @@ textarea:focus {
   margin-bottom: 16px;
 }
 
-/* ===== 10. HELPER & UTILITIES ===== */
-.d-flex { display: flex; }
-.justify-between { justify-content: space-between; }
-.align-center { align-items: center; }
-.gap-2 { gap: 8px; }
-.text-muted { color: #64748b; }
-.text-center { text-align: center; }
-.mt-0 { margin-top: 0; }
-.mt-3 { margin-top: 12px; }
-.mb-0 { margin-bottom: 0; }
+.d-flex {
+  display: flex;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.align-center {
+  align-items: center;
+}
+.gap-2 {
+  gap: 8px;
+}
+.text-muted {
+  color: #67756c;
+}
+.text-center {
+  text-align: center;
+}
+.mt-0 {
+  margin-top: 0;
+}
+.mt-3 {
+  margin-top: 12px;
+}
+.mb-0 {
+  margin-bottom: 0;
+}
 
-/* ===== 11. AVATAR & FOTO ===== */
 .img-avatar {
   width: 38px;
   height: 38px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #cbd8ce;
   display: inline-block;
   vertical-align: middle;
 }
@@ -489,8 +517,8 @@ textarea:focus {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background-color: #e2e8f0;
-  color: #475569;
+  background-color: #e4ebe4;
+  color: #4a5b50;
   font-weight: 600;
   font-size: 14px;
   display: inline-flex;
@@ -499,7 +527,6 @@ textarea:focus {
   vertical-align: middle;
 }
 
-/* ===== 12. PENCARIAN & PAGINATION ===== */
 .search-form {
   display: flex;
   align-items: center;
@@ -511,14 +538,14 @@ textarea:focus {
   width: 220px;
   padding: 6px 12px;
   font-size: 13px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #cbd8ce;
   border-radius: 6px;
   outline: none;
 }
 
 .search-input:focus {
-  border-color: #2980b9;
-  box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.15);
+  border-color: #1f5a43;
+  box-shadow: 0 0 0 3px rgba(31, 90, 67, 0.15);
 }
 
 .pagination {
@@ -537,9 +564,9 @@ textarea:focus {
   height: 32px;
   padding: 0 10px;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #cbd8ce;
   background: #ffffff;
-  color: #475569;
+  color: #4a5b50;
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
@@ -547,14 +574,14 @@ textarea:focus {
 }
 
 .pagination-link:hover:not(.disabled):not(.active) {
-  background-color: #f1f5f9;
-  color: #1e293b;
-  border-color: #94a3b8;
+  background-color: #f0f3ef;
+  color: #24372d;
+  border-color: #87968a;
 }
 
 .pagination-link.active {
-  background-color: #2980b9;
-  border-color: #2980b9;
+  background-color: #1f5a43;
+  border-color: #1f5a43;
   color: #ffffff;
 }
 
@@ -562,5 +589,5 @@ textarea:focus {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
-  background-color: #f8fafc;
+  background-color: #f5f7f4;
 }

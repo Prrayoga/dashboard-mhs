@@ -69,7 +69,6 @@ require 'layout/header.php';
                     <a href="index.php" class="btn btn-sm btn-secondary">Reset</a>
                 <?php endif; ?>
             </form>
-            <a href="create.php" class="btn btn-sm btn-primary">➕ Tambah Mahasiswa</a>
         </div>
     </div>
     <div class="card-body" style="padding: 0;">
@@ -88,7 +87,8 @@ require 'layout/header.php';
                 </thead>
                 <tbody>
                     <?php if (mysqli_num_rows($hasil) > 0) : ?>
-                        <?php $no = $awal + 1; while ($baris = mysqli_fetch_assoc($hasil)) : ?>
+                        <?php $no = $awal + 1;
+                        while ($baris = mysqli_fetch_assoc($hasil)) : ?>
                             <tr>
                                 <td><?= $no++ ?></td>
                                 <td style="text-align: center;">
@@ -160,44 +160,6 @@ require 'layout/header.php';
             <?php endif; ?>
         </div>
     <?php endif; ?>
-</div>
-
-<!-- Form Tambah Cepat -->
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">
-            <span>➕</span> Tambah Mahasiswa Cepat
-        </h3>
-    </div>
-    <div class="card-body">
-        <form action="create.php" method="POST" enctype="multipart/form-data">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="nim">NIM</label>
-                    <input type="text" id="nim" name="nim" placeholder="Contoh: 2201001" required>
-                </div>
-                <div class="form-group">
-                    <label for="nama">Nama Lengkap</label>
-                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama mahasiswa" required>
-                </div>
-                <div class="form-group">
-                    <label for="jurusan">Jurusan</label>
-                    <input type="text" id="jurusan" name="jurusan" placeholder="Contoh: Teknik Informatika" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Contoh: nama@example.com" required>
-                </div>
-                <div class="form-group">
-                    <label for="foto">Foto Profil (Opsional)</label>
-                    <input type="file" id="foto" name="foto" accept="image/*">
-                </div>
-            </div>
-            <div class="form-footer">
-                <button type="submit" class="btn btn-simpan">💾 Simpan Data</button>
-            </div>
-        </form>
-    </div>
 </div>
 
 <?php
