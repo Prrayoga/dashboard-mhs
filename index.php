@@ -8,11 +8,9 @@ $menu_aktif = 'mahasiswa';
 
 // Fitur Pencarian
 $cari = isset($_GET['cari']) ? trim($_GET['cari']) : '';
-$where = "";
-if ($cari !== '') {
-    $cari_escape = mysqli_real_escape_string($koneksi, $cari);
-    $where = "WHERE nim LIKE '%$cari_escape%' OR nama LIKE '%$cari_escape%' OR jurusan LIKE '%$cari_escape%' OR email LIKE '%$cari_escape%'";
-}
+$where = $cari !== ''
+    ? "WHERE m.nim LIKE ? OR m.nama LIKE ? OR j.nama_jurusan LIKE ? OR m.email LIKE ?"
+    : "";
 
 // Fitur Pagination
 $batas = 5; // Jumlah data per halaman
@@ -21,8 +19,14 @@ if ($halaman < 1) $halaman = 1;
 $awal = ($halaman - 1) * $batas;
 
 // Hitung total data
-$query_count = "SELECT COUNT(*) AS total FROM mahasiswa $where";
-$hasil_count = mysqli_query($koneksi, $query_count);
+$query_count = "SELECT COUNT(*) AS total FROM mahasiswa m INNER JOIN jurusan j ON j.id = m.jurusan_id $where";
+$stmt_count = mysqli_prepare($koneksi, $query_count);
+if ($cari !== '') {
+    $term = '%' . $cari . '%';
+    mysqli_stmt_bind_param($stmt_count, "ssss", $term, $term, $term, $term);
+}
+mysqli_stmt_execute($stmt_count);
+$hasil_count = mysqli_stmt_get_result($stmt_count);
 $total_data = 0;
 if ($hasil_count) {
     $baris_count = mysqli_fetch_assoc($hasil_count);
@@ -30,10 +34,19 @@ if ($hasil_count) {
 }
 $total_halaman = ceil($total_data / $batas);
 if ($total_halaman < 1) $total_halaman = 1;
+$halaman = min($halaman, $total_halaman);
+$awal = ($halaman - 1) * $batas;
 
 // Query data mahasiswa dengan LIMIT
-$query = "SELECT * FROM mahasiswa $where ORDER BY id DESC LIMIT $awal, $batas";
-$hasil = mysqli_query($koneksi, $query);
+$query = "SELECT m.*, j.nama_jurusan AS jurusan FROM mahasiswa m INNER JOIN jurusan j ON j.id = m.jurusan_id $where ORDER BY m.id DESC LIMIT ?, ?";
+$stmt_data = mysqli_prepare($koneksi, $query);
+if ($cari !== '') {
+    mysqli_stmt_bind_param($stmt_data, "ssssii", $term, $term, $term, $term, $awal, $batas);
+} else {
+    mysqli_stmt_bind_param($stmt_data, "ii", $awal, $batas);
+}
+mysqli_stmt_execute($stmt_data);
+$hasil = mysqli_stmt_get_result($stmt_data);
 
 require 'layout/header.php';
 ?>
@@ -63,7 +76,7 @@ require 'layout/header.php';
         </h3>
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
             <form action="index.php" method="GET" class="search-form">
-                <input type="text" name="cari" class="search-input" value="<?= htmlspecialchars($cari) ?>" placeholder="Cari data mahasiswa...">
+                <input type="text" name="cari" class="search-input" value="<?= htmlspecialchars($cari) ?>" placeholder="Cari data mahasiswa..." aria-label="Cari mahasiswa berdasarkan NIM, nama, jurusan, atau email">
                 <button type="submit" class="btn btn-sm btn-primary">🔍 Cari</button>
                 <?php if ($cari !== '') : ?>
                     <a href="index.php" class="btn btn-sm btn-secondary">Reset</a>
@@ -82,6 +95,7 @@ require 'layout/header.php';
                         <th>Nama</th>
                         <th>Jurusan</th>
                         <th>Email</th>
+                        <th>Dokumen</th>
                         <th style="width: 140px; text-align: center;">Aksi</th>
                     </tr>
                 </thead>
@@ -102,8 +116,16 @@ require 'layout/header.php';
                                 <td><?= htmlspecialchars($baris['nama']) ?></td>
                                 <td><span class="badge badge-jurusan"><?= htmlspecialchars($baris['jurusan']) ?></span></td>
                                 <td><?= htmlspecialchars($baris['email']) ?></td>
+                                <td>
+                                    <?php if (!empty($baris['dokumen']) && file_exists('uploads/dokumen/' . basename($baris['dokumen']))) : ?>
+                                        <a class="dok-link" href="uploads/dokumen/<?= htmlspecialchars(basename($baris['dokumen']), ENT_QUOTES, 'UTF-8') ?>">Lihat dokumen</a>
+                                    <?php else : ?>
+                                        <span class="dok-kosong">-</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td style="text-align: center;">
                                     <div class="action-buttons">
+                                        <a href="detail.php?id=<?= (int) $baris['id'] ?>" class="btn btn-sm btn-detail">Detail</a>
                                         <a href="edit.php?id=<?= $baris['id'] ?>" class="btn btn-sm btn-edit" title="Edit">✏️ Edit</a>
                                         <a href="delete.php?id=<?= $baris['id'] ?>" class="btn btn-sm btn-hapus" onclick="return confirm('Yakin ingin menghapus data ini?')" title="Hapus">🗑️ Hapus</a>
                                     </div>
@@ -112,7 +134,7 @@ require 'layout/header.php';
                         <?php endwhile; ?>
                     <?php else : ?>
                         <tr>
-                            <td colspan="7">
+                            <td colspan="8">
                                 <div class="empty-state">
                                     <div class="empty-state-icon">📂</div>
                                     <div class="empty-state-text">

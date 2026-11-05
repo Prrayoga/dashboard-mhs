@@ -591,3 +591,90 @@ textarea:focus {
   pointer-events: none;
   background-color: #f5f7f4;
 }
+
+.dok-link {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #eaf3fb;
+  color: #2980b9;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.dok-link:hover {
+  background: #d6e9f8;
+}
+
+.dok-kosong {
+  color: #aaa;
+}
+
+.btn-detail {
+  background-color: #e6efe9;
+  border-color: #c7d9cc;
+  color: #1f5a43;
+}
+
+.btn-detail:hover {
+  background-color: #d5e5da;
+  color: #174531;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px 24px;
+  margin: 0;
+}
+
+.detail-grid div {
+  min-width: 0;
+}
+
+.detail-grid dt {
+  margin-bottom: 4px;
+  color: #67756c;
+  font-size: 12px;
+}
+
+.detail-grid dd {
+  margin: 0;
+  color: #24372d;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.grade-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #e8eee8;
+  color: #4a5b50;
+}
+
+.grade-summary strong {
+  color: #24372d;
+}
+
+.inline-form {
+  display: inline;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.muted-cell {
+  color: #67756c;
+}
+
+@media (max-width: 520px) {
+  .grade-summary {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

@@ -10,14 +10,30 @@ $menu_aktif = 'dashboard';
 $query_total = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM mahasiswa");
 $total_mhs = mysqli_fetch_assoc($query_total)['total'] ?? 0;
 
-$query_jurusan = mysqli_query($koneksi, "SELECT COUNT(DISTINCT jurusan) as total FROM mahasiswa");
+$query_jurusan = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM jurusan");
 $total_jurusan = mysqli_fetch_assoc($query_jurusan)['total'] ?? 0;
+
+$query_per_jurusan = mysqli_query(
+    $koneksi,
+    "SELECT j.nama_jurusan, COUNT(m.id) AS total
+     FROM jurusan j
+     LEFT JOIN mahasiswa m ON m.jurusan_id = j.id
+     GROUP BY j.id, j.nama_jurusan
+     ORDER BY total DESC, j.nama_jurusan"
+);
 
 $query_users = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM users");
 $total_users = mysqli_fetch_assoc($query_users)['total'] ?? 0;
 
 // Ambil 5 mahasiswa terbaru
-$query_terbaru = mysqli_query($koneksi, "SELECT * FROM mahasiswa ORDER BY id DESC LIMIT 5");
+$query_terbaru = mysqli_query(
+    $koneksi,
+    "SELECT m.*, j.nama_jurusan AS jurusan
+     FROM mahasiswa m
+     INNER JOIN jurusan j ON j.id = m.jurusan_id
+     ORDER BY m.id DESC
+     LIMIT 5"
+);
 
 require 'layout/header.php';
 ?>
@@ -67,6 +83,29 @@ require 'layout/header.php';
     </div>
 </div>
 
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Mahasiswa per Jurusan</h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr><th>Jurusan</th><th>Jumlah Mahasiswa</th></tr>
+                </thead>
+                <tbody>
+                    <?php while ($jurusan = mysqli_fetch_assoc($query_per_jurusan)) : ?>
+                        <tr>
+                            <td><?= htmlspecialchars($jurusan['nama_jurusan']) ?></td>
+                            <td><?= (int) $jurusan['total'] ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <!-- Data Terbaru Card -->
 <div class="card">
     <div class="card-header">
@@ -107,6 +146,7 @@ require 'layout/header.php';
                                 <td><?= htmlspecialchars($row['email']) ?></td>
                                 <td style="text-align: center;">
                                     <div class="action-buttons">
+                                        <a href="detail.php?id=<?= (int) $row['id'] ?>" class="btn btn-sm btn-detail">Detail</a>
                                         <a href="edit.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-edit" title="Edit">✏️ Edit</a>
                                     </div>
                                 </td>

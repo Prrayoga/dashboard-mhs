@@ -20,3 +20,9 @@ $cek_kolom = mysqli_query($koneksi, "SHOW COLUMNS FROM mahasiswa LIKE 'foto'");
 if ($cek_kolom && mysqli_num_rows($cek_kolom) == 0) {
     mysqli_query($koneksi, "ALTER TABLE mahasiswa ADD COLUMN foto VARCHAR(255) NULL AFTER email");
 }
+
+// Pastikan kolom dokumen tersedia pada tabel mahasiswa jika belum ada
+$cek_kolom_dokumen = mysqli_query($koneksi, "SHOW COLUMNS FROM mahasiswa LIKE 'dokumen'");
+if ($cek_kolom_dokumen && mysqli_num_rows($cek_kolom_dokumen) == 0) {
+    mysqli_query($koneksi, "ALTER TABLE mahasiswa ADD COLUMN dokumen VARCHAR(255) NULL AFTER email");
+}

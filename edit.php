@@ -1,52 +1,21 @@
 <?php
 require 'config/koneksi.php';
 require 'config/auth.php';
+require 'config/master.php';
 require_once 'config/upload.php';
 wajib_login(); // halaman ini hanya boleh diakses setelah login
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $error = "";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nim = mysqli_real_escape_string($koneksi, $_POST['nim']);
-    $nama = mysqli_real_escape_string($koneksi, $_POST['nama']);
-    $jurusan = mysqli_real_escape_string($koneksi, $_POST['jurusan']);
-    $email = mysqli_real_escape_string($koneksi, $_POST['email']);
-    $id_post = (int) $_POST['id'];
-    $foto_lama = mysqli_real_escape_string($koneksi, $_POST['foto_lama'] ?? '');
-
-    $foto_baru = $foto_lama;
-    $foto_upload = upload_foto($_FILES['foto'] ?? ['error' => UPLOAD_ERR_NO_FILE], $error);
-    if ($foto_upload !== null) {
-        $foto_baru = $foto_upload;
-    }
-
-    if (empty($error)) {
-        $foto_sql = !empty($foto_baru) ? "'$foto_baru'" : "NULL";
-        $query = "UPDATE mahasiswa SET
-            nim = '$nim',
-            nama = '$nama',
-            jurusan = '$jurusan',
-            email = '$email',
-            foto = $foto_sql
-            WHERE id = $id_post";
-
-        if (mysqli_query($koneksi, $query)) {
-            if ($foto_upload !== null) {
-                hapus_foto($foto_lama);
-            }
-            header("Location: index.php?pesan=edit");
-            exit;
-        } else {
-            hapus_foto($foto_upload);
-            $error = "Gagal memperbarui data: " . mysqli_error($koneksi);
-        }
-    }
-}
-
-// Ambil data lama untuk ditampilkan di form
-$query = "SELECT * FROM mahasiswa WHERE id = $id";
-$hasil = mysqli_query($koneksi, $query);
+// Ambil data lama untuk ditampilkan di form dan mempertahankan file yang tidak diganti.
+$stmt = mysqli_prepare(
+    $koneksi,
+    "SELECT m.*, j.nama_jurusan FROM mahasiswa m INNER JOIN jurusan j ON j.id = m.jurusan_id WHERE m.id = ?"
+);
+mysqli_stmt_bind_param($stmt, "i", $id);
+mysqli_stmt_execute($stmt);
+$hasil = mysqli_stmt_get_result($stmt);
 $data = mysqli_fetch_assoc($hasil);
 
 if (!$data) {
@@ -54,8 +23,66 @@ if (!$data) {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $nim = trim($_POST['nim'] ?? '');
+    $nama = trim($_POST['nama'] ?? '');
+    $jurusan_id = (int) ($_POST['jurusan_id'] ?? 0);
+    $email = trim($_POST['email'] ?? '');
+
+    if ($nim === "" || $nama === "" || $email === "") {
+        $error = "NIM, nama, dan email wajib diisi.";
+    } elseif (!jurusan_ada($koneksi, $jurusan_id)) {
+        $error = "Pilih jurusan yang tersedia.";
+    }
+
+    $foto_nama = $data['foto'];
+    $foto_baru = null;
+    $dokumen_nama = $data['dokumen'] ?? null;
+    $dokumen_baru = null;
+
+    if ($error === "") {
+        $foto_baru = upload_foto($_FILES['foto'] ?? ['error' => UPLOAD_ERR_NO_FILE], $error);
+        if ($foto_baru !== null) {
+            $foto_nama = $foto_baru;
+        }
+    }
+    if ($error === "") {
+        $dokumen_baru = upload_dokumen($_FILES['dokumen'] ?? ['error' => UPLOAD_ERR_NO_FILE], $error);
+        if ($dokumen_baru !== null) {
+            $dokumen_nama = $dokumen_baru;
+        }
+    }
+    if ($error !== "") {
+        hapus_foto($foto_baru);
+        hapus_dokumen($dokumen_baru);
+    }
+
+    if ($error === "") {
+        $stmt = mysqli_prepare(
+            $koneksi,
+            "UPDATE mahasiswa SET nim=?, nama=?, jurusan_id=?, email=?, dokumen=?, foto=? WHERE id=?"
+        );
+        mysqli_stmt_bind_param($stmt, "ssisssi", $nim, $nama, $jurusan_id, $email, $dokumen_nama, $foto_nama, $id);
+        if (mysqli_stmt_execute($stmt)) {
+            if ($foto_baru !== null) {
+                hapus_foto($data['foto']);
+            }
+            if ($dokumen_baru !== null) {
+                hapus_dokumen($data['dokumen'] ?? null);
+            }
+            header("Location: index.php?pesan=edit");
+            exit;
+        } else {
+            hapus_foto($foto_baru);
+            hapus_dokumen($dokumen_baru);
+            $error = "Gagal memperbarui data: " . mysqli_error($koneksi);
+        }
+    }
+}
+
 $judul_halaman = 'Edit Mahasiswa';
 $menu_aktif = 'mahasiswa';
+$daftar_jurusan = daftar_jurusan($koneksi);
 
 require 'layout/header.php';
 ?>
@@ -74,8 +101,6 @@ require 'layout/header.php';
     </div>
     <div class="card-body">
         <form action="edit.php?id=<?= $data['id'] ?>" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="id" value="<?= $data['id'] ?>">
-            <input type="hidden" name="foto_lama" value="<?= htmlspecialchars($data['foto'] ?? '') ?>">
 
             <div class="form-grid">
                 <div class="form-group">
@@ -90,12 +115,28 @@ require 'layout/header.php';
 
                 <div class="form-group">
                     <label for="jurusan">Jurusan</label>
-                    <input type="text" id="jurusan" name="jurusan" value="<?= htmlspecialchars($data['jurusan']) ?>" required>
+                    <select id="jurusan_id" name="jurusan_id" required>
+                        <option value="">Pilih jurusan</option>
+                        <?php while ($jurusan = mysqli_fetch_assoc($daftar_jurusan)) : ?>
+                            <option value="<?= (int) $jurusan['id'] ?>" <?= (int) $data['jurusan_id'] === (int) $jurusan['id'] ? 'selected' : '' ?>><?= htmlspecialchars($jurusan['nama_jurusan']) ?></option>
+                        <?php endwhile; ?>
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" value="<?= htmlspecialchars($data['email']) ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dokumen">Ganti Dokumen (kosongkan jika tidak ingin mengganti)</label>
+                    <?php if (!empty($data['dokumen']) && file_exists('uploads/dokumen/' . basename($data['dokumen']))) : ?>
+                        <div class="text-muted" style="margin-bottom: 8px;">
+                            Dokumen saat ini:
+                            <a href="uploads/dokumen/<?= htmlspecialchars(basename($data['dokumen']), ENT_QUOTES, 'UTF-8') ?>">Lihat dokumen</a>
+                        </div>
+                    <?php endif; ?>
+                    <input type="file" id="dokumen" name="dokumen" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt">
                 </div>
 
                 <div class="form-group">

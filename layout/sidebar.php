@@ -25,6 +25,11 @@ function kelas_aktif($nama_menu, $menu_aktif)
                 <span class="menu-ikon">➕</span> Tambah Mahasiswa
             </a>
         </li>
+        <li>
+            <a href="rekap.php" class="<?= kelas_aktif('rekap', $menu_aktif) ?>">
+                <span class="menu-ikon">▤</span> Rekap Nilai
+            </a>
+        </li>
         <li class="sidebar-title">Akun</li>
         <li>
             <a href="logout.php">

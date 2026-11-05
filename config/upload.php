@@ -82,3 +82,113 @@ function hapus_foto(?string $nama_file): void
         unlink($path);
     }
 }
+
+
+// ===== DOKUMEN (PDF, Word, Excel, TXT) =====
+
+define('FOLDER_DOKUMEN', __DIR__ . '/../uploads/dokumen/');
+
+const EKSTENSI_DOKUMEN = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt'];
+
+/**
+ * Memeriksa isi file melalui byte-byte awalnya (signature).
+ * Ekstensi mudah dipalsukan, sedangkan signature lebih sulit.
+ */
+function cek_isi_dokumen(string $path, string $ekstensi): bool
+{
+    $awal = (string) file_get_contents($path, false, null, 0, 8);
+
+    switch ($ekstensi) {
+        case 'pdf':
+            // PDF selalu diawali %PDF
+            return strncmp($awal, '%PDF', 4) === 0;
+
+        case 'docx':
+        case 'xlsx':
+            // Format baru Office = file ZIP, diawali "PK"
+            return strncmp($awal, "PK\x03\x04", 4) === 0;
+
+        case 'doc':
+        case 'xls':
+            // Format lama Office (OLE)
+            return $awal === "\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1";
+
+        case 'txt':
+            // Teks biasa tidak boleh berisi byte NUL
+            $isi = (string) file_get_contents($path, false, null, 0, 4096);
+
+            return strpos($isi, "\0") === false;
+    }
+
+    return false;
+}
+
+/**
+ * Mengunggah dokumen dengan validasi ekstensi, ukuran, dan isi file.
+ */
+function upload_dokumen(array $file, string &$error): ?string
+{
+    if ($file['error'] === UPLOAD_ERR_NO_FILE) {
+        return null; // Dokumen opsional
+    }
+
+    if (
+        $file['error'] === UPLOAD_ERR_INI_SIZE ||
+        $file['error'] === UPLOAD_ERR_FORM_SIZE
+    ) {
+        $error = "Ukuran dokumen melebihi batas yang diizinkan server.";
+        return null;
+    }
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        $error = "Upload dokumen gagal (kode error " . $file['error'] . ").";
+        return null;
+    }
+
+    if ($file['size'] > 5 * 1024 * 1024) {
+        $error = "Ukuran dokumen maksimal 5 MB.";
+        return null;
+    }
+
+    $ekstensi = strtolower(
+        pathinfo($file['name'], PATHINFO_EXTENSION)
+    );
+
+    if (!in_array($ekstensi, EKSTENSI_DOKUMEN, true)) {
+        $error = "Dokumen harus berformat PDF, Word (doc/docx), Excel (xls/xlsx), atau TXT.";
+        return null;
+    }
+
+    if (!cek_isi_dokumen($file['tmp_name'], $ekstensi)) {
+        $error = "Isi file tidak sesuai dengan ekstensinya (file rusak atau bukan dokumen asli).";
+        return null;
+    }
+
+    $nama_baru = 'dok_' . uniqid() . '.' . $ekstensi;
+
+    if (!move_uploaded_file(
+        $file['tmp_name'],
+        FOLDER_DOKUMEN . $nama_baru
+    )) {
+        $error = "Gagal menyimpan dokumen. Pastikan folder uploads/dokumen ada.";
+        return null;
+    }
+
+    return $nama_baru;
+}
+
+/**
+ * Menghapus dokumen berdasarkan nama file.
+ */
+function hapus_dokumen(?string $nama_file): void
+{
+    if (empty($nama_file)) {
+        return;
+    }
+
+    $path = FOLDER_DOKUMEN . basename($nama_file);
+
+    if (file_exists($path)) {
+        unlink($path);
+    }
+}
