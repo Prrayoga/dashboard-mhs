@@ -1,7 +1,7 @@
 <?php
 require 'config/koneksi.php';
 require 'config/auth.php';
-wajib_login(); // halaman ini hanya boleh diakses setelah login
+wajib_role('admin');
 
 $judul_halaman = 'Data Mahasiswa';
 $menu_aktif = 'mahasiswa';

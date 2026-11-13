@@ -2,7 +2,6 @@
 // Ambil huruf pertama nama untuk ditampilkan di lingkaran avatar
 $nama_user = $_SESSION['nama'] ?? 'User';
 $inisial = !empty($nama_user) ? strtoupper(mb_substr($nama_user, 0, 1)) : 'U';
-$username_user = $_SESSION['username'] ?? 'admin';
 ?>
 <header class="navbar">
     <div class="navbar-kiri">
@@ -18,8 +17,14 @@ $username_user = $_SESSION['username'] ?? 'admin';
             <span class="nama-user"><?= htmlspecialchars($nama_user) ?> ▾</span>
         </button>
         <div class="dropdown-menu" id="dropdown-user-menu">
-            <div class="dropdown-info">Login sebagai <strong><?= htmlspecialchars($username_user) ?></strong></div>
-            <a href="dashboard.php">Dashboard</a>
+            <div class="dropdown-info">
+                Login sebagai <strong><?= htmlspecialchars($_SESSION['username']) ?></strong><br>
+                <span class="badge badge-<?= htmlspecialchars(role_user()) ?>">
+                    <?= htmlspecialchars(role_user()) ?>
+                </span>
+            </div>
+            <a href="<?= halaman_beranda() ?>">Beranda</a>
+            <a href="ubah_password.php">Ubah Password</a>
             <a href="logout.php">Logout</a>
         </div>
     </div>

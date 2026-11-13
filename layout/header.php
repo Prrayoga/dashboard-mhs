@@ -25,6 +25,6 @@ $menu_aktif = $menu_aktif ?? '';
                 <div class="page-header">
                     <h1><?= htmlspecialchars($judul_halaman) ?></h1>
                     <div class="breadcrumb">
-                        <a href="dashboard.php">Home</a> / <?= htmlspecialchars($judul_halaman) ?>
+                        <a href="<?= halaman_beranda() ?>">Home</a> / <?= htmlspecialchars($judul_halaman) ?>
                     </div>
                 </div>

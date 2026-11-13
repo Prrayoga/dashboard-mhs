@@ -2,50 +2,54 @@
 require 'config/koneksi.php';
 require 'config/auth.php';
 
-// Kalau sudah login, langsung ke dashboard
+// Sudah login? Arahkan ke beranda sesuai role
 if (sudah_login()) {
-    header("Location: dashboard.php");
+    header("Location: " . halaman_beranda());
     exit;
 }
 
 $error = "";
 $info = "";
 
-// Pesan dari halaman lain (redirect)
 if (isset($_GET['pesan'])) {
     if ($_GET['pesan'] == 'belum_login') {
-        $info = "Silakan login terlebih dahulu untuk mengakses sistem.";
+        $info = "Silakan login terlebih dahulu.";
     } elseif ($_GET['pesan'] == 'logout') {
-        $info = "Anda berhasil logout dari sistem.";
-    } elseif ($_GET['pesan'] == 'registrasi') {
-        $info = "Registrasi berhasil! Silakan login dengan akun baru Anda.";
+        $info = "Anda berhasil logout.";
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = trim($_POST['username']);
-    $password = $_POST['password'];
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    // Prepared statement untuk keamanan login
     $stmt = mysqli_prepare(
         $koneksi,
-        "SELECT id, username, nama_lengkap, password FROM users WHERE username = ?"
+        "SELECT id, username, nama_lengkap, password, role, mahasiswa_id, aktif
+         FROM users WHERE username = ?"
     );
     mysqli_stmt_bind_param($stmt, "s", $username);
     mysqli_stmt_execute($stmt);
-    $hasil = mysqli_stmt_get_result($stmt);
-    $user = mysqli_fetch_assoc($hasil);
+    $user = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 
-    // password_verify membandingkan password dengan hash
-    if ($user && password_verify($password, $user['password'])) {
-        session_regenerate_id(true);
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['nama'] = $user['nama_lengkap'];
-        header("Location: dashboard.php");
-        exit;
-    } else {
+    if (!$user || !password_verify($password, $user['password'])) {
+        // Pesan sengaja umum
         $error = "Username atau password salah.";
+    } elseif ((int) $user['aktif'] !== 1) {
+        // Status akun baru diberitahukan setelah password terbukti benar
+        $error = "Akun Anda dinonaktifkan. Hubungi admin.";
+    } elseif ($user['role'] === 'mahasiswa' && empty($user['mahasiswa_id'])) {
+        $error = "Akun Anda belum terhubung ke data mahasiswa. Hubungi admin.";
+    } else {
+        session_regenerate_id(true);
+        $_SESSION['user_id']      = $user['id'];
+        $_SESSION['username']     = $user['username'];
+        $_SESSION['nama']         = $user['nama_lengkap'];
+        $_SESSION['role']         = $user['role'];
+        $_SESSION['mahasiswa_id'] = $user['mahasiswa_id'];
+
+        header("Location: " . halaman_beranda());
+        exit;
     }
 }
 ?>
@@ -94,10 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px;">Masuk ke Dashboard</button>
         </div>
     </form>
-
-    <div class="auth-footer">
-        Belum punya akun? <a href="register.php">Daftar Akun Baru</a>
-    </div>
 </div>
 
 </body>

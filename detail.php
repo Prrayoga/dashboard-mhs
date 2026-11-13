@@ -2,7 +2,7 @@
 require 'config/koneksi.php';
 require 'config/auth.php';
 require 'config/master.php';
-wajib_login();
+wajib_role('admin');
 
 $id = (int) ($_GET['id'] ?? 0);
 $stmt = mysqli_prepare(

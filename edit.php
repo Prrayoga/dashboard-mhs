@@ -3,7 +3,7 @@ require 'config/koneksi.php';
 require 'config/auth.php';
 require 'config/master.php';
 require_once 'config/upload.php';
-wajib_login(); // halaman ini hanya boleh diakses setelah login
+wajib_role('admin');
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $error = "";

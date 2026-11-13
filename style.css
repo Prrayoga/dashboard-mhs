@@ -678,3 +678,36 @@ textarea:focus {
     gap: 8px;
   }
 }
+
+/* ===== MODUL 10: RBAC ===== */
+.badge-admin     { background: #8e44ad; color: #fff; }
+.badge-mahasiswa { background: #2980b9; color: #fff; }
+.badge-nonaktif  { background: #7f8c8d; color: #fff; }
+.badge-aktif     { background: #27ae60; color: #fff; }
+
+/* Kotak password baru yang ditampilkan sekali kepada admin */
+.pw-baru {
+    display: inline-block;
+    font-family: Consolas, monospace;
+    font-size: 18px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    background: #fff8e1;
+    border: 1px dashed #e0a800;
+    border-radius: 4px;
+}
+
+/* Halaman 403 */
+.error-403 {
+    text-align: center;
+    padding: 40px 20px;
+}
+.error-403 .kode {
+    font-size: 64px;
+    font-weight: bold;
+    color: #c0392b;
+    line-height: 1;
+}
+
+/* Form kecil di dalam sel tabel */
+.form-aksi { display: inline; }
